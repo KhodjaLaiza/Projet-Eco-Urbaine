@@ -1,40 +1,28 @@
 import pandas as pd
 import os
 
-folder_path = "donnees"
+folder = r"/Users/kaneapecche/projets_python/eco_urbaine/input"
+files = os.listdir(folder)
+all_dfs = []
 
-files = [f for f in os.listdir(folder_path) if f.endswith(".xlsx")]
-
-all_data = []
+wanted_sheets = ["Bâti", "Non bâti", "Ensemble des maisons", "Ensemble des appartements"]
+city = ("75", "91", "92", "93", "94", "95", "77", "78")
 
 for file in files:
-    file_path = os.path.join(folder_path, file)  # Chemin complet du fichier
-    
-    annee = None
-    for part in file.split("_"):
-        if part.isdigit() and len(part) == 4 and part.startswith("20"):
-            annee = int(part)
-            break
-    
-    df_dict = pd.read_excel(io=file_path, sheet_name=["Bâti", "Non bâti", "Ensemble des maisons", "Ensemble des appartements"])  
-    
-    for sheet_name, df in df_dict.items():
-        if "codegeo" in df.columns:
-            df = df[df["codegeo"].astype(str).str.startswith(("75", "91", "92", "93", "94", "95", "77", "78"))]
-            df["fichier"] = file
-            df["feuille"] = sheet_name
-            df["annee"] = annee  # Ajouter l'année extraite
+    if not file.startswith("~") and file.endswith(".xlsx"):  # Vérifier l'extension
+        year = file.replace(".xlsx", "")
+        excel_file = pd.ExcelFile(f"{folder}/{file}", engine="openpyxl")  # Lire les fichiers .xlsx
+        sheets = excel_file.sheet_names
+        for sheet in wanted_sheets:
+            if sheet in sheets:  # Vérifier que la feuille existe
+                df = pd.read_excel(f"{folder}/{file}", sheet_name=sheet)
+                df = df[df["codgeo"].astype(str).str.startswith(city)]
+                df["year"] = int(year)
+                df["type_bien"]=sheet
+                all_dfs.append(df)
+                #liste_df = liste_df.rename(columns=lambda col: f"{col}_{sheet}" if col not in ["codgeo", "libgeo", "année"] else col)
 
-            all_data.append(df)  # Ajouter le dataframe à la liste
-if all_data:
-    # Concaténer tous les DataFrames en un seul
-    final_df = pd.concat(all_data, ignore_index=True)
+df_final = pd.concat(all_dfs, ignore_index=True, sort=False)
 
-    # Sauvegarde en CSV
-    final_df.to_csv("idf_data.csv", index=False, encoding="utf-8")
-
-    print("✅ Le fichier CSV a été créé : idf_data.csv")
-else:
-    print("❌ Aucune donnée valide trouvée. Vérifie tes fichiers Excel.")
-
-print(df.head())
+df_final.to_csv("output.csv", index=False, encoding="utf-8")
+print("fichier csv généré avec succées)")
