@@ -24,5 +24,5 @@ for file in files:
 
 df_final = pd.concat(all_dfs, ignore_index=True, sort=False)
 
-df_final.to_csv("output.csv", index=False, encoding="utf-8")
+df_final.to_csv("output/donnees_filtrees.csv", index=False, encoding="utf-8")
 print("fichier csv généré avec succées)")
