@@ -1,0 +1,75 @@
+#graphique sur evolution des prix des terres en fonction du temps 
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Charger les données filtrées
+df = pd.read_csv(r"C:\Users\mejdo\OneDrive\Bureau\données_python\output\donnees_filtrees.csv")
+
+# Filtrer sur le type "Non bâti"
+df_non_bati = df[df["type_bien"] == "Non bâti"]
+
+# Calculer le prix moyen par année
+df_prix_temps = df_non_bati.groupby("year")["prix_m2"].mean().reset_index()
+
+# Tracer le graphique
+plt.figure(figsize=(10, 6))
+plt.plot(df_prix_temps["year"], df_prix_temps["prix_m2"], marker="o", linestyle="-", color="green")
+plt.title("Évolution du prix moyen des terres non bâties en Île-de-France")
+plt.xlabel("Année")
+plt.ylabel("Prix moyen au m² (€)")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+#evolution des prix de construction en fonction du temps 
+                                                       
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Charger les données filtrées
+df = pd.read_csv("output/donnees_filtrees.csv")
+
+# Filtrer sur le type "Bâti"
+df_bati = df[df["type_bien"] == "Bâti"]
+
+# Calculer le prix moyen par année
+df_prix_bati = df_bati.groupby("year")["prix_m2"].mean().reset_index()
+
+# Tracer le graphique
+plt.figure(figsize=(10, 6))
+plt.plot(df_prix_bati["year"], df_prix_bati["prix_m2"], marker="o", linestyle="-", color="blue")
+plt.title("Évolution du prix moyen des biens bâtis en Île-de-France")
+plt.xlabel("Année")
+plt.ylabel("Prix moyen au m² (€)")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+
+#fusion des deux graphiques 
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Charger les données filtrées
+df = pd.read_csv("output/donnees_filtrees.csv")
+
+# Filtrer les deux types de biens
+df_non_bati = df[df["type_bien"] == "Non bâti"]
+df_bati = df[df["type_bien"] == "Bâti"]
+
+# Moyenne annuelle des prix
+prix_non_bati = df_non_bati.groupby("year")["prix_m2"].mean().reset_index()
+prix_bati = df_bati.groupby("year")["prix_m2"].mean().reset_index()
+
+# Tracer les deux courbes sur le même graphique
+plt.figure(figsize=(10, 6))
+plt.plot(prix_non_bati["year"], prix_non_bati["prix_m2"], marker="o", linestyle="-", color="green", label="Non bâti (terrain)")
+plt.plot(prix_bati["year"], prix_bati["prix_m2"], marker="s", linestyle="--", color="blue", label="Bâti (construction)")
+
+plt.title("Évolution des prix au m² en Île-de-France (Bâti vs Non bâti)")
+plt.xlabel("Année")
+plt.ylabel("Prix moyen au m² (€)")
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+plt.show()
