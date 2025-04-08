@@ -1,7 +1,8 @@
 import pandas as pd
 import os
 
-folder = r"/Users/kaneapecche/projets_python/eco_urbaine/input"
+
+folder = "../input"
 files = os.listdir(folder)
 all_dfs = []
 
@@ -24,5 +25,6 @@ for file in files:
 
 df_final = pd.concat(all_dfs, ignore_index=True, sort=False)
 
-df_final.to_csv("output/donnees_filtrees.csv", index=False, encoding="utf-8")
+df_final.to_csv("../output/donnee_filtrees.csv", index=False, encoding="utf-8")
 print("fichier csv généré avec succées)")
+
